@@ -1,5 +1,5 @@
---- orig/shell.c	2018-02-20 10:41:05.477047088 +0000
-+++ shell.c	2019-03-15 19:21:22.193972160 +0000
+--- orig/shell.c	2019-09-29 17:23:57.599234973 -0700
++++ shell.c	2019-09-29 17:23:57.761238147 -0700
 @@ -87,6 +87,12 @@
  #endif
  #include <ctype.h>
@@ -37,8 +37,8 @@
      if( p->openMode==SHELL_OPEN_ZIPFILE ){
        char *zSql = sqlite3_mprintf(
           "CREATE VIRTUAL TABLE zip USING zipfile(%Q);", p->zDbFilename);
---- orig/sqlite3.c	2019-01-14 19:10:21.799582821 +0000
-+++ sqlite3.c	2019-01-14 19:10:21.847582627 +0000
+--- orig/sqlite3.c	2019-09-29 17:23:57.747237873 -0700
++++ sqlite3.c	2019-09-29 17:23:57.816239225 -0700
 @@ -30672,6 +30672,10 @@
  # include <sys/mount.h>
  #endif
@@ -104,7 +104,59 @@
        goto shm_open_err;
      }
  
-@@ -118054,7 +118070,7 @@
+@@ -51575,15 +51591,9 @@
+   unsigned pgFlags      /* Various flags */
+ ){
+   unsigned level = pgFlags & PAGER_SYNCHRONOUS_MASK;
+-  if( pPager->tempFile ){
+-    pPager->noSync = 1;
+-    pPager->fullSync = 0;
+-    pPager->extraSync = 0;
+-  }else{
+-    pPager->noSync =  level==PAGER_SYNCHRONOUS_OFF ?1:0;
+-    pPager->fullSync = level>=PAGER_SYNCHRONOUS_FULL ?1:0;
+-    pPager->extraSync = level==PAGER_SYNCHRONOUS_EXTRA ?1:0;
+-  }
++  pPager->noSync = 1;
++  pPager->fullSync = 0;
++  pPager->extraSync = 0;
+   if( pPager->noSync ){
+     pPager->syncFlags = 0;
+   }else if( pgFlags & PAGER_FULLFSYNC ){
+@@ -52897,18 +52907,11 @@
+   pPager->memDb = (u8)memDb;
+   pPager->readOnly = (u8)readOnly;
+   assert( useJournal || pPager->tempFile );
+-  pPager->noSync = pPager->tempFile;
+-  if( pPager->noSync ){
+-    assert( pPager->fullSync==0 );
+-    assert( pPager->extraSync==0 );
+-    assert( pPager->syncFlags==0 );
+-    assert( pPager->walSyncFlags==0 );
+-  }else{
+-    pPager->fullSync = 1;
+-    pPager->extraSync = 0;
+-    pPager->syncFlags = SQLITE_SYNC_NORMAL;
+-    pPager->walSyncFlags = SQLITE_SYNC_NORMAL | (SQLITE_SYNC_NORMAL<<2);
+-  }
++  pPager->noSync = 1;
++  assert( pPager->fullSync==0 );
++  assert( pPager->extraSync==0 );
++  assert( pPager->syncFlags==0 );
++  assert( pPager->walSyncFlags==0 );
+   /* pPager->pFirst = 0; */
+   /* pPager->pFirstSynced = 0; */
+   /* pPager->pLast = 0; */
+@@ -100928,7 +100931,7 @@
+ #endif
+     sqlite3BtreeLeave(pNew->pBt);
+   }
+-  pNew->safety_level = SQLITE_DEFAULT_SYNCHRONOUS+1;
++  pNew->safety_level = 1;
+   pNew->zDbSName = sqlite3DbStrDup(db, zName);
+   if( rc==SQLITE_OK && pNew->zDbSName==0 ){
+     rc = SQLITE_NOMEM_BKPT;
+@@ -118054,7 +118057,7 @@
    }
    if( pDb->pSchema->file_format>SQLITE_MAX_FILE_FORMAT ){
      sqlite3SetString(pzErrMsg, db, "unsupported file format");
@@ -113,7 +165,16 @@
      goto initone_error_out;
    }
  
-@@ -152769,13 +152785,25 @@
+@@ -146360,7 +146363,7 @@
+   ** database it is OFF. This matches the pager layer defaults.  
+   */
+   db->aDb[0].zDbSName = "main";
+-  db->aDb[0].safety_level = SQLITE_DEFAULT_SYNCHRONOUS+1;
++  db->aDb[0].safety_level = 1;
+   db->aDb[1].zDbSName = "temp";
+   db->aDb[1].safety_level = PAGER_SYNCHRONOUS_OFF;
+ 
+@@ -152769,13 +152772,25 @@
    ** module with sqlite.
    */
    if( SQLITE_OK==rc 
