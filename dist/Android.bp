@@ -39,6 +39,7 @@ cc_defaults {
         "-DSQLITE_ENABLE_BATCH_ATOMIC_WRITE",
         "-Wno-unused-parameter",
         "-Werror",
+        "-fno-experimental-new-pass-manager",
     ],
 
     target: {
