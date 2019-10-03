@@ -39,6 +39,7 @@ cc_defaults {
         "-DSQLITE_ENABLE_BATCH_ATOMIC_WRITE",
         "-DBIONIC_IOCTL_NO_SIGNEDNESS_OVERLOAD",
         "-Wno-unused-parameter",
+        "-Wno-string-plus-int",
         "-Werror",
 
         // Turn off the new pass manager due to miscompile.
