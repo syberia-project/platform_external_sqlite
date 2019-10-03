@@ -42,6 +42,7 @@ cc_defaults {
         "-DSQLITE_DEFAULT_WAL_SYNCHRONOUS=1",
         "-DSQLITE_LIKE_DOESNT_MATCH_BLOBS",
         "-Wno-unused-parameter",
+        "-Wno-string-plus-int",
         "-Werror",
     ],
 
