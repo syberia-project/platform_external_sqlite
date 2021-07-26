@@ -25,6 +25,7 @@ cc_library_static {
         "-Werror",
         "-Wno-unused-function",
         "-Wno-unused-variable",
+        "-O3",
     ],
     srcs: [
         "PhoneNumberUtils.cpp",
