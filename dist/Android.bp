@@ -99,6 +99,7 @@ cc_defaults {
     target: {
         android: {
             cflags: [
+                "-O3",
                 "-DUSE_PREAD64",
                 "-Dfdatasync=fdatasync",
                 "-DHAVE_MALLOC_H=1",
