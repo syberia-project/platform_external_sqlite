@@ -77,6 +77,13 @@ cc_defaults {
 
         // Default value causes sqlite3_open_v2 to return error if DB is missing.
         "-ftrivial-auto-var-init=pattern",
+
+        // HACK: MediaProvider is using rowid query to check for permissions
+        //  and since its database consists of views such a query fails due
+        //  to a change in new sqlite versions that restricted rowids to be
+        //  used withing views. Full discussion here:
+        //  https://sqlite.org/forum/forumpost/3ab3e2dabc
+        "-DSQLITE_ALLOW_ROWID_IN_VIEW",
     ],
 
     target: {
