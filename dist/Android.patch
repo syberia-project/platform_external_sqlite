@@ -1,5 +1,5 @@
---- orig/shell.c	2022-09-05 13:28:58.000000000 +0200
-+++ shell.c	2022-09-20 21:36:42.941494417 +0200
+--- orig/shell.c	2022-09-29 18:01:49.000000000 +0200
++++ shell.c	2022-10-11 00:02:33.033334261 +0200
 @@ -107,6 +107,11 @@
  #endif
  #include <ctype.h>
@@ -35,8 +35,8 @@
      if( p->openMode==SHELL_OPEN_ZIPFILE ){
        char *zSql = sqlite3_mprintf(
           "CREATE VIRTUAL TABLE zip USING zipfile(%Q);", zDbFilename);
---- orig/sqlite3.c	2022-09-05 13:28:58.000000000 +0200
-+++ sqlite3.c	2022-09-20 21:36:42.957495424 +0200
+--- orig/sqlite3.c	2022-09-29 18:01:49.000000000 +0200
++++ sqlite3.c	2022-10-11 00:02:33.059336006 +0200
 @@ -35618,6 +35618,10 @@
  # include <sys/mount.h>
  #endif
@@ -102,7 +102,7 @@
        goto shm_open_err;
      }
  
-@@ -134864,7 +134880,7 @@
+@@ -134873,7 +134889,7 @@
    }
    if( pDb->pSchema->file_format>SQLITE_MAX_FILE_FORMAT ){
      sqlite3SetString(pzErrMsg, db, "unsupported file format");
@@ -111,7 +111,7 @@
      goto initone_error_out;
    }
  
-@@ -180923,13 +180939,27 @@
+@@ -180949,13 +180965,27 @@
    ** module with sqlite.
    */
    if( SQLITE_OK==rc
