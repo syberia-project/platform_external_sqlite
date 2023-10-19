@@ -1,5 +1,5 @@
---- orig/shell.c	2023-09-19 07:44:42.939926150 +0000
-+++ shell.c	2023-09-19 07:44:42.995925694 +0000
+--- orig/shell.c	2023-10-19 14:22:06.991838778 +0300
++++ shell.c	2023-10-19 14:22:07.067838191 +0300
 @@ -127,6 +127,11 @@
  #endif
  #include <ctype.h>
@@ -34,8 +34,8 @@
      if( p->openMode==SHELL_OPEN_ZIPFILE ){
        char *zSql = sqlite3_mprintf(
           "CREATE VIRTUAL TABLE zip USING zipfile(%Q);", zDbFilename);
---- orig/sqlite3.c	2023-09-19 07:44:42.947926086 +0000
-+++ sqlite3.c	2023-09-19 07:44:43.031925401 +0000
+--- orig/sqlite3.c	2023-10-19 14:22:06.995838747 +0300
++++ sqlite3.c	2023-10-19 14:22:07.095837975 +0300
 @@ -37781,6 +37781,10 @@
  # include <sys/mount.h>
  #endif
@@ -101,7 +101,7 @@
        goto shm_open_err;
      }
  
-@@ -139660,7 +139676,7 @@
+@@ -139661,7 +139677,7 @@
    }
    if( pDb->pSchema->file_format>SQLITE_MAX_FILE_FORMAT ){
      sqlite3SetString(pzErrMsg, db, "unsupported file format");
@@ -110,7 +110,7 @@
      goto initone_error_out;
    }
  
-@@ -186719,7 +186735,9 @@
+@@ -186720,7 +186736,9 @@
    ** module with sqlite.
    */
    if( SQLITE_OK==rc
@@ -120,7 +120,7 @@
     && SQLITE_OK==(rc = sqlite3_overload_function(db, "snippet", -1))
     && SQLITE_OK==(rc = sqlite3_overload_function(db, "offsets", 1))
     && SQLITE_OK==(rc = sqlite3_overload_function(db, "matchinfo", 1))
-@@ -186730,6 +186748,20 @@
+@@ -186731,6 +186749,20 @@
      rc = sqlite3_create_module_v2(
          db, "fts3", &fts3Module, (void *)pHash, hashDestroy
      );
