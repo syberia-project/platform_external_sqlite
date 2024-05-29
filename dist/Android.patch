@@ -1,5 +1,5 @@
---- orig/shell.c	2024-05-29 13:24:44.005437216 +0300
-+++ shell.c	2024-05-29 13:24:44.081437312 +0300
+--- orig/shell.c	2024-05-29 13:26:18.797477530 +0300
++++ shell.c	2024-05-29 13:26:18.829477518 +0300
 @@ -127,6 +127,11 @@
  #endif
  #include <ctype.h>
@@ -34,8 +34,8 @@
      if( p->openMode==SHELL_OPEN_ZIPFILE ){
        char *zSql = sqlite3_mprintf(
           "CREATE VIRTUAL TABLE zip USING zipfile(%Q);", zDbFilename);
---- orig/sqlite3.c	2024-05-29 13:24:44.009437221 +0300
-+++ sqlite3.c	2024-05-29 13:24:44.113437352 +0300
+--- orig/sqlite3.c	2024-05-29 13:26:18.825477520 +0300
++++ sqlite3.c	2024-05-29 17:23:17.589937783 +0300
 @@ -38502,6 +38502,10 @@
  # include <sys/mount.h>
  #endif
@@ -141,3 +141,31 @@
      if( rc==SQLITE_OK ){
        pHash->nRef++;
        rc = sqlite3_create_module_v2(
+@@ -217081,6 +217113,15 @@
+   return 0;
+ }
+ 
++#ifdef __ANDROID__
++static void ucol_setStrength_sqlite(UCollator *coll,
++            UCollationStrength strength)
++{
++    UErrorCode status = U_ZERO_ERROR;
++    ucol_setAttribute(coll, UCOL_STRENGTH, strength, &status);
++}
++#endif
++
+ /*
+ ** Implementation of the scalar function icu_load_collation().
+ **
+@@ -217137,7 +217178,11 @@
+     unsigned int i;
+     for(i=0; i<sizeof(aStrength)/sizeof(aStrength[0]); i++){
+       if( sqlite3_stricmp(zOption,aStrength[i].zName)==0 ){
++#ifdef __ANDROID__
++        ucol_setStrength_sqlite(pUCollator, aStrength[i].val);
++#else
+         ucol_setStrength(pUCollator, aStrength[i].val);
++#endif
+         break;
+       }
+     }

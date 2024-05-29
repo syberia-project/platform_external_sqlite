@@ -217113,6 +217113,15 @@ static int icuCollationColl(
   return 0;
 }
 
+#ifdef __ANDROID__
+static void ucol_setStrength_sqlite(UCollator *coll,
+            UCollationStrength strength)
+{
+    UErrorCode status = U_ZERO_ERROR;
+    ucol_setAttribute(coll, UCOL_STRENGTH, strength, &status);
+}
+#endif
+
 /*
 ** Implementation of the scalar function icu_load_collation().
 **
@@ -217169,7 +217178,11 @@ static void icuLoadCollation(
     unsigned int i;
     for(i=0; i<sizeof(aStrength)/sizeof(aStrength[0]); i++){
       if( sqlite3_stricmp(zOption,aStrength[i].zName)==0 ){
+#ifdef __ANDROID__
+        ucol_setStrength_sqlite(pUCollator, aStrength[i].val);
+#else
         ucol_setStrength(pUCollator, aStrength[i].val);
+#endif
         break;
       }
     }
